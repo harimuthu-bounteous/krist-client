@@ -1,0 +1,16 @@
+export type Color =
+  | "White"
+  | "Light Blue"
+  | "Dark Blue"
+  | "Black"
+  | "Gray"
+  | "Pink"
+  | "Blue"
+  | "Red"
+  | "Navy"
+  | "Beige"
+  | "Olive"
+  | "Camel"
+  | "Cream"
+  | "Brown"
+  | "Green";
