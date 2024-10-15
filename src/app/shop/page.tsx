@@ -6,6 +6,8 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import FilterSideBar from "@/components/PLP/FilterSideBar";
+import ProductListSection from "@/components/PLP/ProductListSection";
 
 const page: FC = ({}) => {
   return (
@@ -21,6 +23,7 @@ const page: FC = ({}) => {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
+      <ProductListSection />
     </>
   );
 };
