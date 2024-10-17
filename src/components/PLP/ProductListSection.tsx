@@ -12,7 +12,7 @@ const ProductListSection: FC = () => {
   const [activeColors, setActiveColors] = useState<string[]>([]);
   const [activeSizes, setActiveSizes] = useState<string[]>([]);
 
-  const [currentPage, setCurrentPage] = useState(1);
+  // const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState("featured");
 
   return (
@@ -48,14 +48,17 @@ const ProductListSection: FC = () => {
           activeSizes={activeSizes}
           sortBy={sortBy}
         />
-        <Pagination
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          totalPages={10}
-        />
       </div>
     </div>
   );
 };
 
 export default ProductListSection;
+
+{
+  /* <Pagination
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalPages={10}
+        /> */
+}

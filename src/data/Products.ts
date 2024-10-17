@@ -23,6 +23,10 @@ export const products: Product[] = [
         url: "/images/ClassicWhiteT-Shirt2.jpg",
         alt_text: "Back view of classic white t-shirt",
       },
+      {
+        url: "/images/ClassicWhiteT-Shirt3.jpg",
+        alt_text: "Only classic white t-shirt",
+      },
     ],
   },
   {

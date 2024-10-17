@@ -1,28 +1,16 @@
 import { FC } from "react";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import FilterSideBar from "@/components/PLP/FilterSideBar";
 import ProductListSection from "@/components/PLP/ProductListSection";
+import BreadCrumbSection from "@/components/common/BreadCrumbSection";
 
 const page: FC = ({}) => {
+  const links = [
+    { label: "Home", href: "/" },
+    { label: "Shop", href: "/shop" },
+  ];
+
   return (
     <>
-      <Breadcrumb>
-        <BreadcrumbList className="text-lg font-medium">
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/">Home</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/shop">Shop</BreadcrumbLink>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
+      <BreadCrumbSection links={links} />
       <ProductListSection />
     </>
   );
