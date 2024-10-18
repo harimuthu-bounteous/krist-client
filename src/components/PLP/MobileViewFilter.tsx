@@ -10,28 +10,11 @@ import {
 import { Filter } from "lucide-react";
 import FilterContent from "./FilterContent";
 
-interface MobileViewFilterProps {
-  activeCategories: string[];
-  setActiveCategories: (categories: string[]) => void;
-  priceRange: [number, number];
-  setPriceRange: (range: [number, number]) => void;
-  activeColors: string[];
-  setActiveColors: (colors: string[]) => void;
-  activeSizes: string[];
-  setActiveSizes: (sizes: string[]) => void;
-}
+interface MobileViewFilterProps {}
 
-const MobileViewFilter: FC<MobileViewFilterProps> = ({
-  activeCategories,
-  activeColors,
-  activeSizes,
-  priceRange,
-  setActiveCategories,
-  setActiveColors,
-  setActiveSizes,
-  setPriceRange,
-}) => {
+const MobileViewFilter: FC<MobileViewFilterProps> = ({}) => {
   const [isOpen, setIsOpen] = useState(false);
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -47,18 +30,7 @@ const MobileViewFilter: FC<MobileViewFilterProps> = ({
           <DialogTitle>Filters</DialogTitle>
         </DialogHeader>
         <div className="space-y-6">
-          <FilterContent
-            activeCategories={activeCategories}
-            activeColors={activeColors}
-            activeSizes={activeSizes}
-            priceRange={priceRange}
-            setActiveCategories={setActiveCategories}
-            setActiveColors={setActiveColors}
-            setActiveSizes={setActiveSizes}
-            setPriceRange={setPriceRange}
-            open={isOpen}
-            setOpen={setIsOpen}
-          />
+          <FilterContent open={isOpen} setOpen={setIsOpen} />
         </div>
       </DialogContent>
     </Dialog>

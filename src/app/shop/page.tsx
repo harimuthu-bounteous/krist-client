@@ -9,10 +9,10 @@ const page: FC = ({}) => {
   ];
 
   return (
-    <>
+    <div className="p-6">
       <BreadCrumbSection links={links} />
       <ProductListSection />
-    </>
+    </div>
   );
 };
 

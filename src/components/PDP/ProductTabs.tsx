@@ -16,7 +16,7 @@ const ProductTabs: FC<ProductTabsProps> = ({ product }) => {
         <TabsTrigger value="reviews">Reviews</TabsTrigger>
       </TabsList>
       <TabsContent value="description" className="mt-4">
-        <Typography value={product.description} variant="p" />
+        <Typography value={product.Description} variant="p" />
       </TabsContent>
       <TabsContent value="additional" className="mt-4">
         <Typography

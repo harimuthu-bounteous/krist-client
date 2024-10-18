@@ -1,47 +1,78 @@
 import { Product } from "@/types/Product";
-import { Heart, Minus, Plus, Star } from "lucide-react";
+import { Heart, Loader2, Minus, Plus, ShoppingCart, Star } from "lucide-react";
 import { FC, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { useCartStore } from "@/store/cartStore";
+import { useAuthStore } from "@/store/authStore";
+import { toast } from "sonner";
+import { useAddToCart } from "@/hooks/api/useAddToCart";
 
 interface ProductInfoProps {
   product: Product;
 }
 
 const ProductInfo: FC<ProductInfoProps> = ({ product }) => {
-  const [selectedColor, setSelectedColor] = useState(product.colors?.[0]);
-  const [selectedSize, setSelectedSize] = useState(product.sizes?.[0]);
+  const [selectedColor, setSelectedColor] = useState(product.Colors?.[0]);
+  const [selectedSize, setSelectedSize] = useState(product.Sizes?.[0]);
   const [quantity, setQuantity] = useState(1);
 
   const addToCart = useCartStore((state) => state.addToCart);
-  const cart = useCartStore((state) => state.cart);
+  // const cart = useCartStore((state) => state.cart);
+  const { user, token, isAuthenticated } = useAuthStore();
+  const addToCartMutation = useAddToCart();
 
   const handleAddToCart = () => {
     if (selectedColor && selectedSize) {
-      addToCart({
-        productId: product.productId,
-        product: product,
+      addToCartMutation.mutate({
+        productId: product.ProductId,
         color: selectedColor,
         size: selectedSize,
         quantity: quantity,
       });
+
+      if (addToCartMutation.isSuccess) {
+        // Add to store
+        addToCart({
+          productId: product.ProductId,
+          product: product,
+          color: selectedColor,
+          size: selectedSize,
+          quantity: quantity,
+        });
+
+        // Success Toast
+        toast("Add To Cart", {
+          description: "Product has been added to the Cart",
+          action: {
+            label: <ShoppingCart className="size-5" />,
+            onClick: () => console.log("Cart"),
+          },
+          actionButtonStyle: {
+            padding: 15,
+            borderColor: "black",
+          },
+          style: {
+            borderColor: "green",
+          },
+        });
+      }
     }
   };
 
   // useEffect(() => {
-  //   console.log("Updated Cart", cart);
-  // }, [cart]);
+  //   console.log("Auth", user, token, isAuthenticated);
+  // }, [user, token]);
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">{product.name}</h1>
+      <h1 className="text-2xl font-bold">{product.Name}</h1>
       <div className="flex items-center gap-2">
         <div className="flex">
           {[...Array(5)].map((_, i) => (
             <Star
               key={i}
               className={`w-4 h-4 ${
-                i < Math.floor(product.rating)
+                i < Math.floor(product.Rating)
                   ? "text-yellow-400 fill-yellow-400"
                   : "text-gray-300"
               }`}
@@ -49,22 +80,22 @@ const ProductInfo: FC<ProductInfoProps> = ({ product }) => {
           ))}
         </div>
         <span className="text-sm text-gray-500">
-          ({product.total_reviews} Reviews)
+          ({product.TotalReviews} Reviews)
         </span>
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-2xl font-bold">${product.price.toFixed(2)}</span>
-        {product.original_price > product.price && (
+        <span className="text-2xl font-bold">${product.Price.toFixed(2)}</span>
+        {product.OriginalPrice > product.Price && (
           <span className="text-sm text-gray-500 line-through">
-            ${product.original_price.toFixed(2)}
+            ${product.OriginalPrice.toFixed(2)}
           </span>
         )}
       </div>
-      <p className="text-gray-600">{product.description}</p>
+      <p className="text-gray-600">{product.Description}</p>
       <div>
         <h3 className="font-semibold mb-2">Color</h3>
         <div className="flex gap-2">
-          {product.colors?.map((color) => (
+          {product.Colors?.map((color) => (
             <button
               key={color}
               onClick={() => setSelectedColor(color)}
@@ -80,7 +111,7 @@ const ProductInfo: FC<ProductInfoProps> = ({ product }) => {
       <div>
         <h3 className="font-semibold mb-2">Size</h3>
         <div className="flex gap-2">
-          {product.sizes?.map((size) => (
+          {product.Sizes?.map((size) => (
             <button
               key={size}
               onClick={() => setSelectedSize(size)}
@@ -107,15 +138,16 @@ const ProductInfo: FC<ProductInfoProps> = ({ product }) => {
           <span className="px-4">{quantity}</span>
           <button
             onClick={() =>
-              setQuantity(Math.min(product.available_stock, quantity + 1))
+              setQuantity(Math.min(product.AvailableStock, quantity + 1))
             }
             className="p-2"
           >
             <Plus className="w-4 h-4" />
           </button>
         </div>
-        <Button className="flex-1" onClick={handleAddToCart}>
-          Add to Cart
+        <Button className="flex-1 gap-2" onClick={handleAddToCart}>
+          Add to Cart{" "}
+          {addToCartMutation.isPending && <Loader2 className="animate-spin" />}
         </Button>
         <Button variant="outline" size="icon">
           <Heart className="w-4 h-4" />

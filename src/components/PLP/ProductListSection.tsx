@@ -2,31 +2,16 @@
 import { FC, useState } from "react";
 import dynamic from "next/dynamic";
 import ProductGrid from "./ProductGrid";
-import Pagination from "./Pagination";
+import { useFilterStore } from "@/store/filterStore";
 
 const FilterSideBar = dynamic(() => import("@/components/PLP/FilterSideBar"));
 
 const ProductListSection: FC = () => {
-  const [activeCategories, setActiveCategories] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
-  const [activeColors, setActiveColors] = useState<string[]>([]);
-  const [activeSizes, setActiveSizes] = useState<string[]>([]);
-
-  // const [currentPage, setCurrentPage] = useState(1);
-  const [sortBy, setSortBy] = useState("featured");
+  const { sortBy, setSortBy } = useFilterStore();
 
   return (
     <div className="py-8 flex flex-col md:flex-row gap-8">
-      <FilterSideBar
-        activeCategories={activeCategories}
-        activeColors={activeColors}
-        activeSizes={activeSizes}
-        priceRange={priceRange}
-        setActiveCategories={setActiveCategories}
-        setActiveColors={setActiveColors}
-        setActiveSizes={setActiveSizes}
-        setPriceRange={setPriceRange}
-      />
+      <FilterSideBar />
 
       <div className="flex-1">
         <div className="flex justify-between items-center mb-4">
@@ -41,24 +26,10 @@ const ProductListSection: FC = () => {
             <option value="price-desc">Price: High to Low</option>
           </select>
         </div>
-        <ProductGrid
-          activeCategories={activeCategories}
-          priceRange={priceRange}
-          activeColors={activeColors}
-          activeSizes={activeSizes}
-          sortBy={sortBy}
-        />
+        <ProductGrid />
       </div>
     </div>
   );
 };
 
 export default ProductListSection;
-
-{
-  /* <Pagination
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          totalPages={10}
-        /> */
-}

@@ -13,8 +13,8 @@ const ProductImageGallery: FC<ProductImageGalleryProps> = ({ images }) => {
     <div className="flex flex-col md:flex-row-reverse justify-center gap-4">
       <div className="relative max-w-96 aspect-square">
         <Image
-          src={mainImage.url}
-          alt={mainImage.alt_text}
+          src={mainImage.Url}
+          alt={mainImage.AltText}
           fill
           className="rounded-lg border object-cover"
           sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
@@ -23,7 +23,7 @@ const ProductImageGallery: FC<ProductImageGalleryProps> = ({ images }) => {
       </div>
       <div className="flex flex-row md:flex-col gap-2">
         {images.map((image, index) => {
-          if (image.alt_text !== mainImage.alt_text)
+          if (image.AltText !== mainImage.AltText)
             return (
               <button
                 key={index}
@@ -31,8 +31,8 @@ const ProductImageGallery: FC<ProductImageGalleryProps> = ({ images }) => {
                 className="relative w-20 h-20 border rounded-md overflow-hidden"
               >
                 <Image
-                  src={image.url}
-                  alt={image.alt_text}
+                  src={image.Url}
+                  alt={image.AltText}
                   fill
                   className="object-cover"
                   sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw" // Add responsive sizes here

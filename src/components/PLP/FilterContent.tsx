@@ -2,32 +2,25 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { FC, useState } from "react";
 import { Button } from "../ui/button";
+import { useFilterStore } from "@/store/filterStore";
 
 interface FilterContentProps {
-  activeCategories: string[];
-  setActiveCategories: (categories: string[]) => void;
-  priceRange: [number, number];
-  setPriceRange: (range: [number, number]) => void;
-  activeColors: string[];
-  setActiveColors: (colors: string[]) => void;
-  activeSizes: string[];
-  setActiveSizes: (sizes: string[]) => void;
   open?: boolean;
   setOpen?: (open: boolean) => void;
 }
 
-const FilterContent: FC<FilterContentProps> = ({
-  activeCategories,
-  activeColors,
-  activeSizes,
-  priceRange,
-  setActiveCategories,
-  setActiveColors,
-  setActiveSizes,
-  setPriceRange,
-  open,
-  setOpen,
-}) => {
+const FilterContent: FC<FilterContentProps> = ({ open, setOpen }) => {
+  const {
+    activeCategories,
+    activeColors,
+    activeSizes,
+    priceRange,
+    setActiveCategories,
+    setActiveColors,
+    setActiveSizes,
+    setPriceRange,
+  } = useFilterStore();
+
   const categories = ["Men", "Women", "Kids", "Accessories"];
   const colors = ["Red", "Blue", "Green", "Black", "White", "Yellow"];
   const sizes = ["XS", "S", "M", "L", "XL", "XXL"];

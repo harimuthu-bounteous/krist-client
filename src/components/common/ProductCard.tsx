@@ -27,9 +27,10 @@ const ProductCard: FC<ProductCardProps> = ({ product }) => {
         <div className="relative aspect-square">
           <Image
             src={ProductImg}
-            alt={product.images[0].alt_text}
+            alt={product.Images[0].AltText}
             fill
             className="object-cover"
+            priority
           />
           {isHovered && (
             <div className=" flex items-end p-4 absolute inset-0 bg-black bg-opacity-20 transition-opacity duration-300">
@@ -41,7 +42,7 @@ const ProductCard: FC<ProductCardProps> = ({ product }) => {
                   <Share2 className="h-4 w-4" />
                 </Button>
                 <Button
-                  onClick={() => router.push("/product/" + product.productId)}
+                  onClick={() => router.push("/product/" + product.ProductId)}
                   size="icon"
                   variant="secondary"
                 >
@@ -50,7 +51,7 @@ const ProductCard: FC<ProductCardProps> = ({ product }) => {
               </div>
 
               <Button
-                onClick={() => router.push("/product/" + product.productId)}
+                onClick={() => router.push("/product/" + product.ProductId)}
                 className="w-full"
               >
                 Add to Cart
@@ -60,13 +61,13 @@ const ProductCard: FC<ProductCardProps> = ({ product }) => {
         </div>
       </CardContent>
       <CardFooter className="flex flex-col items-start p-4">
-        <Typography variant="h4" className="mb-1" value={product.name} />
+        <Typography variant="h4" className="mb-1" value={product.Name} />
         <div className="flex justify-between items-center gap-2 mb-2">
-          <Typography variant="large" value={"$" + product.price.toFixed(2)} />
+          <Typography variant="large" value={"$" + product.Price.toFixed(2)} />
           <Typography
             variant="muted"
             className="line-through text-base"
-            value={"$" + product.original_price.toFixed(2)}
+            value={"$" + product.OriginalPrice.toFixed(2)}
           />
         </div>
       </CardFooter>
