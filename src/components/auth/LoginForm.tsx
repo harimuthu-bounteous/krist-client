@@ -18,6 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useLogin } from "@/hooks/api/useLogin";
+import Link from "next/link";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -125,10 +126,13 @@ const LoginForm: FC = () => {
           </Button>
         </form>
       </Form>
-      <div className="text-center text-sm">
-        <a href="#" className="text-primary hover:underline">
+      <div className=" flex justify-between text-sm">
+        <Link href="/register" className="text-primary hover:underline">
+          Create a new account?
+        </Link>
+        <Link href="#" className="text-primary hover:underline">
           Forgot Password?
-        </a>
+        </Link>
       </div>
     </div>
   );

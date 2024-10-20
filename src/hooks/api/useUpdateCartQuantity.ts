@@ -1,42 +1,25 @@
 import { useAuthStore } from "@/store/authStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export const useAddToCart = () => {
+export const useUpdateCartQuantity = () => {
   const router = useRouter();
   const { token, user, clearAuth } = useAuthStore(); // Access token and user from Zustand store
 
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (credentials: {
-      productId: string;
-      color: string;
-      size: string;
-      quantity: number;
-    }) => {
+    mutationFn: async (payload: { cartId: string; newQuantity: number }) => {
       if (!token || !user) {
-        toast("Session expired", {
-          description: "Please kindly login to continue",
-          action: {
-            label: "Login",
-            onClick: () => router.push("/login"),
-          },
-        });
-
+        toast("Please kindly login for Purchasing");
         throw new Error("Authentication required");
       }
 
-      const requestData = {
-        userId: user.UserId,
-        ...credentials,
-      };
-
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/cart/add`,
-        requestData,
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/cart/update`,
+        { cartId: payload.cartId, quantity: payload.newQuantity },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -47,15 +30,13 @@ export const useAddToCart = () => {
     },
 
     onSuccess: (data) => {
-      // console.log("On Success : ", data);
+      // console.log("On Success 'useUpdateCartQuantity'", data);
       queryClient.invalidateQueries({
         queryKey: ["cartByUserId", user?.UserId],
       });
-
-      // router.push("/shop");
     },
     onError: (error: AxiosError) => {
-      console.log("Add to Cart failed:", error);
+      console.log("Error in 'useUpdateCartQuantity' :", error);
 
       if (error.status === 401) {
         clearAuth();
@@ -63,7 +44,7 @@ export const useAddToCart = () => {
           description: "Please login again",
           action: {
             label: "Login",
-            onClick: () => router.push("/login"),
+            onClick: () => redirect("/login"),
           },
           actionButtonStyle: {
             padding: 15,

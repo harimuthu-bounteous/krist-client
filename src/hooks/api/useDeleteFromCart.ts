@@ -4,39 +4,21 @@ import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export const useAddToCart = () => {
+export const useDeleteFromCart = () => {
   const router = useRouter();
   const { token, user, clearAuth } = useAuthStore(); // Access token and user from Zustand store
 
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (credentials: {
-      productId: string;
-      color: string;
-      size: string;
-      quantity: number;
-    }) => {
+    mutationFn: async (cartId: string) => {
       if (!token || !user) {
-        toast("Session expired", {
-          description: "Please kindly login to continue",
-          action: {
-            label: "Login",
-            onClick: () => router.push("/login"),
-          },
-        });
-
+        toast("Please kindly login for Purchasing");
         throw new Error("Authentication required");
       }
 
-      const requestData = {
-        userId: user.UserId,
-        ...credentials,
-      };
-
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/cart/add`,
-        requestData,
+      const response = await axios.delete(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/cart/${cartId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -51,11 +33,15 @@ export const useAddToCart = () => {
       queryClient.invalidateQueries({
         queryKey: ["cartByUserId", user?.UserId],
       });
-
-      // router.push("/shop");
+      toast("Deleted From Cart", {
+        description: "Product deleted successfully",
+        style: {
+          borderColor: "green",
+        },
+      });
     },
     onError: (error: AxiosError) => {
-      console.log("Add to Cart failed:", error);
+      console.log("Error in 'useDeleteFromCart' :", error);
 
       if (error.status === 401) {
         clearAuth();

@@ -10,6 +10,7 @@ const fetchRelatedProductById = async (id: string): Promise<Product[]> => {
     // console.log(response.data);
     return response.data;
   } catch (error) {
+    console.log("Error in 'useFetchRelatedProductById' : ", error);
     if (axios.isAxiosError(error)) {
       throw new Error(
         error.response?.data?.message ||

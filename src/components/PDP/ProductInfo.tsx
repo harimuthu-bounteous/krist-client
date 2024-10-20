@@ -1,24 +1,24 @@
 import { Product } from "@/types/Product";
 import { Heart, Loader2, Minus, Plus, ShoppingCart, Star } from "lucide-react";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { Button } from "../ui/button";
 import { useCartStore } from "@/store/cartStore";
-import { useAuthStore } from "@/store/authStore";
 import { toast } from "sonner";
 import { useAddToCart } from "@/hooks/api/useAddToCart";
+import { useRouter } from "next/navigation";
 
 interface ProductInfoProps {
   product: Product;
 }
 
 const ProductInfo: FC<ProductInfoProps> = ({ product }) => {
+  const router = useRouter();
+
   const [selectedColor, setSelectedColor] = useState(product.Colors?.[0]);
   const [selectedSize, setSelectedSize] = useState(product.Sizes?.[0]);
   const [quantity, setQuantity] = useState(1);
 
-  const addToCart = useCartStore((state) => state.addToCart);
-  // const cart = useCartStore((state) => state.cart);
-  const { user, token, isAuthenticated } = useAuthStore();
+  const { cart, addToCart } = useCartStore();
   const addToCartMutation = useAddToCart();
 
   const handleAddToCart = () => {
@@ -30,38 +30,36 @@ const ProductInfo: FC<ProductInfoProps> = ({ product }) => {
         quantity: quantity,
       });
 
-      if (addToCartMutation.isSuccess) {
-        // Add to store
-        addToCart({
-          productId: product.ProductId,
-          product: product,
-          color: selectedColor,
-          size: selectedSize,
-          quantity: quantity,
-        });
+      // Add to store
+      addToCart({
+        ProductId: product.ProductId,
+        ProductName: product.Name,
+        Color: selectedColor,
+        Size: selectedSize,
+        Quantity: quantity,
+        CartId: "",
+        Category: product.Category,
+        Price: product.Price,
+        UserId: "",
+      });
 
-        // Success Toast
-        toast("Add To Cart", {
-          description: "Product has been added to the Cart",
-          action: {
-            label: <ShoppingCart className="size-5" />,
-            onClick: () => console.log("Cart"),
-          },
-          actionButtonStyle: {
-            padding: 15,
-            borderColor: "black",
-          },
-          style: {
-            borderColor: "green",
-          },
-        });
-      }
+      // Success Toast
+      toast("Add To Cart", {
+        description: "Product has been added to the Cart",
+        action: {
+          label: <ShoppingCart className="size-5" />,
+          onClick: () => router.push("/checkout"),
+        },
+        actionButtonStyle: {
+          padding: 15,
+          borderColor: "black",
+        },
+        style: {
+          borderColor: "green",
+        },
+      });
     }
   };
-
-  // useEffect(() => {
-  //   console.log("Auth", user, token, isAuthenticated);
-  // }, [user, token]);
 
   return (
     <div className="flex flex-col gap-4">

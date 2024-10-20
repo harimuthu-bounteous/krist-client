@@ -1,3 +1,5 @@
+import { ProductImage } from "./Product";
+
 export interface Cart {
   CartId: string;
   UserId: string;
@@ -5,4 +7,10 @@ export interface Cart {
   Quantity: number;
   Color: string;
   Size: string;
+  ProductName: string;
+  Category: string;
+  Price: number;
+  Colors?: string[];
+  Sizes?: string[];
+  Images?: ProductImage[];
 }

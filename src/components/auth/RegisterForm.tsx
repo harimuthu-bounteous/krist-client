@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import Link from "next/link";
+import { useRegister } from "@/hooks/api/useRegister";
 
 const formSchema = z.object({
   firstName: z.string().min(2, "First name must be at least 2 characters"),
@@ -31,6 +33,8 @@ const formSchema = z.object({
 const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
 
+  const { mutate: registerMutate, isPending } = useRegister();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,6 +48,9 @@ const RegisterForm = () => {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+    registerMutate(values);
+
+    form.reset();
   }
 
   return (
@@ -150,11 +157,19 @@ const RegisterForm = () => {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full">
-            Signup
+          <Button
+            type="submit"
+            className="w-full gap-4 transition-all duration-200"
+          >
+            Signup {isPending && <Loader2 className="animate-spin" />}
           </Button>
         </form>
       </Form>
+      <div className=" flex justify-end text-sm pt-4">
+        <Link href="/login" className="text-primary hover:underline">
+          Have already an account
+        </Link>
+      </div>
     </div>
   );
 };

@@ -1,186 +1,196 @@
-// "use client";
+"use client";
+import { useState } from "react";
+import Image from "next/image";
+import { Loader2, Minus, Plus, Trash2 } from "lucide-react";
 
-// import { useState } from "react";
-// import Image from "next/image";
-// import { Minus, Plus, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useCartStore } from "@/store/cartStore";
+import { useFetchCartByUserId } from "@/hooks/api/useFetchCartByUserId";
+import { Typography } from "../ui/typography";
+import { useUpdateCartQuantity } from "@/hooks/api/useUpdateCartQuantity";
+import { useDeleteFromCart } from "@/hooks/api/useDeleteFromCart";
 
-// import { Button } from "@/components/ui/button";
-// import { Input } from "@/components/ui/input";
-// import {
-//   Table,
-//   TableBody,
-//   TableCell,
-//   TableHead,
-//   TableHeader,
-//   TableRow,
-// } from "@/components/ui/table";
+export default function Checkout() {
+  const { data: cartItems = [], isLoading } = useFetchCartByUserId();
+  const updateCartQuantityMutation = useUpdateCartQuantity();
+  const deleteFromCartMutation = useDeleteFromCart();
 
-// interface Product {
-//   id: number;
-//   name: string;
-//   size: string;
-//   price: number;
-//   image: string;
-// }
+  const { updateQuantity, removeFromCart, totalPrice } = useCartStore();
 
-// const initialProducts: Product[] = [
-//   {
-//     id: 1,
-//     name: "Girls Pink Moana Printed Dress",
-//     size: "S",
-//     price: 80,
-//     image: "/placeholder.svg?height=80&width=80",
-//   },
-//   {
-//     id: 2,
-//     name: "Women Textured Handheld Bag",
-//     size: "Regular",
-//     price: 80,
-//     image: "/placeholder.svg?height=80&width=80",
-//   },
-//   {
-//     id: 3,
-//     name: "Tailored Cotton Casual Shirt",
-//     size: "M",
-//     price: 40,
-//     image: "/placeholder.svg?height=80&width=80",
-//   },
-// ];
+  const [discountCode, setDiscountCode] = useState("");
+  const deliveryCharge = 5;
 
-// export default function Checkout() {
-//   const [products, setProducts] = useState(initialProducts);
-//   const [discountCode, setDiscountCode] = useState("");
-//   const deliveryCharge = 5;
+  const applyDiscount = () => {
+    // In a real application, you would validate the discount code here
+    console.log("Applying discount:", discountCode);
+  };
 
-//   const updateQuantity = (id: number, change: number) => {
-//     setProducts(
-//       products.map((product) =>
-//         product.id === id
-//           ? {
-//               ...product,
-//               quantity: Math.max((product.quantity || 1) + change, 0),
-//             }
-//           : product
-//       )
-//     );
-//   };
+  if (isLoading) {
+    return (
+      <div className="h-[100vh] flex items-end justify-center">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
+  }
 
-//   const removeProduct = (id: number) => {
-//     setProducts(products.filter((product) => product.id !== id));
-//   };
+  return (
+    <div className="container mx-auto p-6">
+      <Typography
+        value="Checkout"
+        variant="h1"
+        className="text-3xl font-bold my-3"
+      />
+      <div className="flex flex-col justify-evenly items-center lg:flex-row gap-8">
+        <Table className="w-max table-auto border rounded-md">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="md:w-1/2">Products</TableHead>
+              <TableHead className="w-1/6 text-right">Price</TableHead>
+              <TableHead className="w-1/6 text-center">Quantity</TableHead>
+              <TableHead className="w-1/6 text-right">Subtotal</TableHead>
+              <TableHead className="w-1/12"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {cartItems.map((item) => (
+              <TableRow key={item.ProductId}>
+                <TableCell className="">
+                  <div className="flex items-center space-x-4">
+                    <Image
+                      src={
+                        ("https://nocajhsrlymhnxsemfoa.supabase.co/storage/v1/object/public/krist_DB_images" +
+                          item.Images?.[0].Url) as string
+                      }
+                      alt={item.Images?.[0].AltText as string}
+                      width={80}
+                      height={80}
+                      className="rounded"
+                    />
+                    <div className="flex flex-col">
+                      <div className="font-medium text-sm sm:text-base truncate w-24 md:w-48">
+                        {item.ProductName}
+                      </div>
+                      <div className="text-xs sm:text-sm text-gray-500">
+                        Size: {item.Size}
+                      </div>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell className="text-right">
+                  ${item.Price.toFixed(2)}
+                </TableCell>
+                <TableCell>
+                  <div className="flex justify-center items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => {
+                        updateCartQuantityMutation.mutate({
+                          cartId: item.CartId,
+                          newQuantity: item.Quantity - 1,
+                        });
+                        updateQuantity(item.ProductId, -1);
+                      }}
+                      className="size-7"
+                    >
+                      <Minus className="size-3" />
+                    </Button>
+                    <Typography
+                      value={item.Quantity || 1}
+                      variant="span"
+                      className="font-medium"
+                    />
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="size-7"
+                      onClick={() => {
+                        updateCartQuantityMutation.mutate({
+                          cartId: item.CartId,
+                          newQuantity: item.Quantity + 1,
+                        });
+                        updateQuantity(item.ProductId, 1);
+                      }}
+                    >
+                      <Plus className="size-3" />
+                    </Button>
+                  </div>
+                </TableCell>
+                <TableCell className="text-right">
+                  ${((item.Quantity || 1) * item.Price).toFixed(2)}
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      deleteFromCartMutation.mutate(item.CartId);
+                      removeFromCart(item.ProductId);
+                    }}
+                    className="hover:text-red-500 hover:bg-red-50"
+                  >
+                    {deleteFromCartMutation.isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    )}
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
 
-//   const subtotal = products.reduce(
-//     (sum, product) => sum + product.price * (product.quantity || 1),
-//     0
-//   );
-//   const grandTotal = subtotal + deliveryCharge;
+        <div className="bg-gray-100 p-6 rounded-lg w-full lg:w-1/3 space-y-6 border">
+          <Typography
+            value="Order Summary"
+            variant="h2"
+            className="text-xl font-semibold mb-4"
+          />
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <Typography value="Subtotal" variant="span" />
+              <Typography
+                value={"$" + totalPrice().toFixed(2)}
+                variant="span"
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Input
+                placeholder="Enter Discount Code"
+                value={discountCode}
+                onChange={(e) => setDiscountCode(e.target.value)}
+              />
+              <Button onClick={applyDiscount}>Apply</Button>
+            </div>
+            <div className="flex justify-between">
+              <Typography value="Delivery Charge" variant="span" />
+              <Typography
+                value={"$" + deliveryCharge.toFixed(2)}
+                variant="span"
+              />
+            </div>
+            <div className="flex justify-between font-semibold text-lg">
+              <Typography value="Grand Total" variant="span" />
+              <Typography
+                value={"$" + (totalPrice() + deliveryCharge).toFixed(2)}
+                variant="span"
+              />
+            </div>
+          </div>
 
-//   const applyDiscount = () => {
-//     // In a real application, you would validate the discount code here
-//     console.log("Applying discount:", discountCode);
-//   };
-
-//   return (
-//     <div className="container mx-auto p-6">
-//       <h1 className="text-3xl font-bold mb-6">Checkout</h1>
-//       <div className="flex flex-col lg:flex-row gap-8">
-//         <div className="lg:w-2/3">
-//           <Table>
-//             <TableHeader>
-//               <TableRow>
-//                 <TableHead>Products</TableHead>
-//                 <TableHead>Price</TableHead>
-//                 <TableHead>Quantity</TableHead>
-//                 <TableHead>Subtotal</TableHead>
-//                 <TableHead></TableHead>
-//               </TableRow>
-//             </TableHeader>
-//             <TableBody>
-//               {products.map((product) => (
-//                 <TableRow key={product.id}>
-//                   <TableCell>
-//                     <div className="flex items-center space-x-4">
-//                       <Image
-//                         src={product.image}
-//                         alt={product.name}
-//                         width={80}
-//                         height={80}
-//                         className="rounded"
-//                       />
-//                       <div>
-//                         <div className="font-medium">{product.name}</div>
-//                         <div className="text-sm text-gray-500">
-//                           Size: {product.size}
-//                         </div>
-//                       </div>
-//                     </div>
-//                   </TableCell>
-//                   <TableCell>${product.price.toFixed(2)}</TableCell>
-//                   <TableCell>
-//                     <div className="flex items-center space-x-2">
-//                       <Button
-//                         variant="outline"
-//                         size="icon"
-//                         onClick={() => updateQuantity(product.id, -1)}
-//                       >
-//                         <Minus className="h-4 w-4" />
-//                       </Button>
-//                       <span>{product.quantity || 1}</span>
-//                       <Button
-//                         variant="outline"
-//                         size="icon"
-//                         onClick={() => updateQuantity(product.id, 1)}
-//                       >
-//                         <Plus className="h-4 w-4" />
-//                       </Button>
-//                     </div>
-//                   </TableCell>
-//                   <TableCell>
-//                     ${((product.quantity || 1) * product.price).toFixed(2)}
-//                   </TableCell>
-//                   <TableCell>
-//                     <Button
-//                       variant="ghost"
-//                       size="icon"
-//                       onClick={() => removeProduct(product.id)}
-//                     >
-//                       <Trash2 className="h-4 w-4" />
-//                     </Button>
-//                   </TableCell>
-//                 </TableRow>
-//               ))}
-//             </TableBody>
-//           </Table>
-//         </div>
-//         <div className="lg:w-1/3 space-y-6">
-//           <div className="bg-gray-50 p-6 rounded-lg">
-//             <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-//             <div className="space-y-2">
-//               <div className="flex justify-between">
-//                 <span>Subtotal</span>
-//                 <span>${subtotal.toFixed(2)}</span>
-//               </div>
-//               <div className="flex items-center space-x-2">
-//                 <Input
-//                   placeholder="Enter Discount Code"
-//                   value={discountCode}
-//                   onChange={(e) => setDiscountCode(e.target.value)}
-//                 />
-//                 <Button onClick={applyDiscount}>Apply</Button>
-//               </div>
-//               <div className="flex justify-between">
-//                 <span>Delivery Charge</span>
-//                 <span>${deliveryCharge.toFixed(2)}</span>
-//               </div>
-//               <div className="flex justify-between font-semibold text-lg">
-//                 <span>Grand Total</span>
-//                 <span>${grandTotal.toFixed(2)}</span>
-//               </div>
-//             </div>
-//           </div>
-//           <Button className="w-full">Proceed to Checkout</Button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
+          <Button className="w-full">Proceed to Checkout</Button>
+        </div>
+      </div>
+    </div>
+  );
+}

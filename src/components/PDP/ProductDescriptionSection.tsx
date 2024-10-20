@@ -1,11 +1,13 @@
 "use client";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import { Product, ProductImage } from "@/types/Product";
 
 import ProductImageGallery from "./ProductGallery";
 import ProductInfo from "./ProductInfo";
 import ProductTabs from "./ProductTabs";
 import { useFetchProductById } from "@/hooks/api/useFetchProductById";
+import ProductDescriptionSkeleton from "../skeleton/ProductDescriptionSkeleton";
+import RelatedProducts from "./RelateProduct";
 
 interface ProductDescriptionSectionProps {
   productId: string;
@@ -22,7 +24,7 @@ const ProductDescriptionSection: FC<ProductDescriptionSectionProps> = ({
   } = useFetchProductById(productId);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <ProductDescriptionSkeleton />;
   }
 
   if (isError) {
@@ -31,12 +33,15 @@ const ProductDescriptionSection: FC<ProductDescriptionSectionProps> = ({
   }
 
   return (
-    <div className="container mx-auto p-8 md:px-4 md:py-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+    <div className="container mx-auto p-8 md:px-20 md:py-8 space-y-8">
+      <div className="flex flex-col items-center justify-evenly lg:flex-row gap-6 lg:gap-12">
         <ProductImageGallery images={product?.Images as ProductImage[]} />
         <ProductInfo product={product as Product} />
       </div>
-      <ProductTabs product={product as Product} />
+      <div className="md:p-8 flex flex-col gap-4">
+        <ProductTabs product={product as Product} />
+        <RelatedProducts productId={product?.ProductId as string} />
+      </div>
     </div>
   );
 };

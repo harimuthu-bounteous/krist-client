@@ -9,13 +9,15 @@ const page: FC = ({}) => {
         <Image
           alt="Login Model"
           src="https://nocajhsrlymhnxsemfoa.supabase.co/storage/v1/object/public/krist_DB_images/RegisterModel.png"
-          width={1000}
+          width={2000}
           height={1200}
-          className="h-screen w-full object-cover object-top"
+          // fill
+          // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="h-full w-full object-cover object-top"
           priority
         />
         <Image
-          alt=""
+          alt="Logo"
           src="https://nocajhsrlymhnxsemfoa.supabase.co/storage/v1/object/public/krist_DB_images/KristLogo.png"
           width={200}
           height={200}

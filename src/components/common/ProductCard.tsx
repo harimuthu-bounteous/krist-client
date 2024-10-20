@@ -1,19 +1,19 @@
 "use client";
-import Image from "next/image";
 import { FC, useState } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Typography } from "@/components/ui/typography";
 import { Eye, Share2, Heart } from "lucide-react";
-import ProductImg from "@/assets/image.png";
 import { useRouter } from "next/navigation";
 import { Product } from "@/types/Product";
+import CustomImageWrapper from "./CustomImageWrapper";
 
 interface ProductCardProps {
   product: Product;
+  index: number;
 }
 
-const ProductCard: FC<ProductCardProps> = ({ product }) => {
+const ProductCard: FC<ProductCardProps> = ({ product, index }) => {
   const router = useRouter();
   const [isHovered, setIsHovered] = useState(false);
 
@@ -25,12 +25,24 @@ const ProductCard: FC<ProductCardProps> = ({ product }) => {
     >
       <CardContent className="p-0">
         <div className="relative aspect-square">
-          <Image
-            src={ProductImg}
+          {/* <Image
+            src={
+              "https://nocajhsrlymhnxsemfoa.supabase.co/storage/v1/object/public/krist_DB_images" +
+              product.Images[0].Url
+            }
             alt={product.Images[0].AltText}
+            sizes="100vw"
             fill
             className="object-cover"
             priority
+          /> */}
+          <CustomImageWrapper
+            alt={product.Images[0].AltText}
+            src={
+              "https://nocajhsrlymhnxsemfoa.supabase.co/storage/v1/object/public/krist_DB_images" +
+              product.Images[0].Url
+            }
+            priority={index < 4}
           />
           {isHovered && (
             <div className=" flex items-end p-4 absolute inset-0 bg-black bg-opacity-20 transition-opacity duration-300">

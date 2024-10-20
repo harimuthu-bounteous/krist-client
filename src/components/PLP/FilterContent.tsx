@@ -1,8 +1,10 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { Button } from "../ui/button";
 import { useFilterStore } from "@/store/filterStore";
+import { useFetchFilteredProducts } from "@/hooks/api/useFetchFilteredProducts";
+import FilterSectionSkeleton from "../skeleton/FilterSectionSkeleton";
 
 interface FilterContentProps {
   open?: boolean;
@@ -21,55 +23,57 @@ const FilterContent: FC<FilterContentProps> = ({ open, setOpen }) => {
     setPriceRange,
   } = useFilterStore();
 
+  const { isLoading, isRefetching, isFetching } = useFetchFilteredProducts();
+
   const categories = ["Men", "Women", "Kids", "Accessories"];
   const colors = ["Red", "Blue", "Green", "Black", "White", "Yellow"];
   const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
 
-  const [tempCategories, setTempCategories] = useState(activeCategories);
-  const [tempColors, setTempColors] = useState(activeColors);
-  const [tempSizes, setTempSizes] = useState(activeSizes);
-  const [tempPriceRange, setTempPriceRange] = useState(priceRange);
-
   const handleCategoryChange = (category: string) => {
-    if (tempCategories.includes(category)) {
-      setTempCategories(tempCategories.filter((c) => c !== category));
+    if (activeCategories.includes(category)) {
+      setActiveCategories(activeCategories.filter((c) => c !== category));
     } else {
-      setTempCategories([...tempCategories, category]);
+      setActiveCategories([...activeCategories, category]);
     }
   };
 
   const handleColorChange = (color: string) => {
-    if (tempColors.includes(color)) {
-      setTempColors(tempColors.filter((c) => c !== color));
+    if (activeColors.includes(color)) {
+      setActiveColors(activeColors.filter((c) => c !== color));
     } else {
-      setTempColors([...tempColors, color]);
+      setActiveColors([...activeColors, color]);
     }
   };
 
   const handleSizeChange = (size: string) => {
-    if (tempSizes.includes(size)) {
-      setTempSizes(tempSizes.filter((s) => s !== size));
+    if (activeSizes.includes(size)) {
+      setActiveSizes(activeSizes.filter((s) => s !== size));
     } else {
-      setTempSizes([...tempSizes, size]);
+      setActiveSizes([...activeSizes, size]);
     }
+  };
+
+  const handlePriceChange = (value: [number, number]) => {
+    setPriceRange(value);
   };
 
   const handleClear = () => {
-    setTempCategories([]);
-    setTempColors([]);
-    setTempSizes([]);
-    setTempPriceRange([0, 1000]);
+    setActiveCategories([]);
+    setActiveColors([]);
+    setActiveSizes([]);
+    setPriceRange([0, 1000]);
   };
 
-  const handleApply = () => {
-    setActiveCategories(tempCategories);
-    setActiveColors(tempColors);
-    setActiveSizes(tempSizes);
-    setPriceRange(tempPriceRange);
-    if (setOpen) {
-      setOpen(false);
-    }
-  };
+  const isAnyFilterApplied =
+    activeCategories.length > 0 ||
+    activeColors.length > 0 ||
+    activeSizes.length > 0 ||
+    priceRange[0] > 0 ||
+    priceRange[1] < 1000;
+
+  if (isLoading || isRefetching || isFetching) {
+    return <FilterSectionSkeleton />;
+  }
 
   return (
     <>
@@ -80,8 +84,10 @@ const FilterContent: FC<FilterContentProps> = ({ open, setOpen }) => {
             <div key={category} className="flex items-center space-x-2">
               <Checkbox
                 id={`category-${category}`}
-                checked={tempCategories.includes(category)}
-                onCheckedChange={() => handleCategoryChange(category)}
+                checked={activeCategories.includes(category)}
+                onCheckedChange={() => {
+                  handleCategoryChange(category);
+                }}
               />
               <label htmlFor={`category-${category}`}>{category}</label>
             </div>
@@ -93,14 +99,14 @@ const FilterContent: FC<FilterContentProps> = ({ open, setOpen }) => {
             min={0}
             max={1000}
             step={10}
-            value={tempPriceRange}
+            value={priceRange}
             onValueChange={(value) =>
-              setTempPriceRange(value as [number, number])
+              handlePriceChange(value as [number, number])
             }
           />
           <div className="flex justify-between mt-2">
-            <span>${tempPriceRange[0]}</span>
-            <span>${tempPriceRange[1]}</span>
+            <span>${priceRange[0]}</span>
+            <span>${priceRange[1]}</span>
           </div>
         </div>
         <div>
@@ -109,7 +115,7 @@ const FilterContent: FC<FilterContentProps> = ({ open, setOpen }) => {
             <div key={color} className="flex items-center space-x-2">
               <Checkbox
                 id={`color-${color}`}
-                checked={tempColors.includes(color)}
+                checked={activeColors.includes(color)}
                 onCheckedChange={() => handleColorChange(color)}
               />
               <label htmlFor={`color-${color}`}>{color}</label>
@@ -122,7 +128,7 @@ const FilterContent: FC<FilterContentProps> = ({ open, setOpen }) => {
             <div key={size} className="flex items-center space-x-2">
               <Checkbox
                 id={`size-${size}`}
-                checked={tempSizes.includes(size)}
+                checked={activeSizes.includes(size)}
                 onCheckedChange={() => handleSizeChange(size)}
               />
               <label htmlFor={`size-${size}`}>{size}</label>
@@ -130,14 +136,14 @@ const FilterContent: FC<FilterContentProps> = ({ open, setOpen }) => {
           ))}
         </div>
       </div>
-      <div className="flex space-x-2">
-        <Button variant="outline" onClick={handleClear} className="flex-1">
-          Clear
-        </Button>
-        <Button onClick={handleApply} className="flex-1">
-          Apply
-        </Button>
-      </div>
+
+      {isAnyFilterApplied && (
+        <div className="flex space-x-2">
+          <Button variant="outline" onClick={handleClear} className="flex-1">
+            Clear
+          </Button>
+        </div>
+      )}
     </>
   );
 };

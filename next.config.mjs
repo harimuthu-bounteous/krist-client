@@ -1,7 +1,19 @@
+// @ts-check
+// import withPlaiceholder from "@plaiceholder/next";
+
 /** @type {import('next').NextConfig} */
+
 const nextConfig = {
   images: {
-    domains: ["nocajhsrlymhnxsemfoa.supabase.co"], // Add your Supabase domain here
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "nocajhsrlymhnxsemfoa.supabase.co",
+        port: "",
+        pathname: "/storage/v1/object/public/krist_DB_images/**",
+        search: "",
+      },
+    ],
   },
 };
 

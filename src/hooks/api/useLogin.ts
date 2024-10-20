@@ -2,6 +2,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export const useLogin = () => {
   const router = useRouter();
@@ -19,10 +20,11 @@ export const useLogin = () => {
     onSuccess: (response) => {
       console.log(response.message);
       setAuth(JSON.parse(response.data.user), response.data.token);
+      toast("Login Successful");
       router.push("/shop");
     },
     onError: (error) => {
-      console.log("Login failed :", error);
+      console.log("Error in 'useLogin' : ", error);
     },
   });
 };

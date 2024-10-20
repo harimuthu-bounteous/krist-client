@@ -1,6 +1,6 @@
 import { ProductImage } from "@/types/Product";
-import Image from "next/image";
 import { FC, useState } from "react";
+import CustomImageWrapper from "../common/CustomImageWrapper";
 
 interface ProductImageGalleryProps {
   images: ProductImage[];
@@ -11,33 +11,34 @@ const ProductImageGallery: FC<ProductImageGalleryProps> = ({ images }) => {
 
   return (
     <div className="flex flex-col md:flex-row-reverse justify-center gap-4">
-      <div className="relative max-w-96 aspect-square">
-        <Image
-          src={mainImage.Url}
+      <div className="relative w-[20rem] md:w-[30rem] aspect-square border rounded-md">
+        <CustomImageWrapper
           alt={mainImage.AltText}
-          fill
-          className="rounded-lg border object-cover"
-          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-          priority
+          src={
+            "https://nocajhsrlymhnxsemfoa.supabase.co/storage/v1/object/public/krist_DB_images" +
+            mainImage.Url
+          }
+          className="rounded-md"
+          priority={true}
         />
       </div>
       <div className="flex flex-row md:flex-col gap-2">
         {images.map((image, index) => {
           if (image.AltText !== mainImage.AltText)
             return (
-              <button
+              <div
                 key={index}
                 onClick={() => setMainImage(image)}
-                className="relative w-20 h-20 border rounded-md overflow-hidden"
+                className="relative w-20 h-20 border rounded-md overflow-hidden cursor-pointer"
               >
-                <Image
-                  src={image.Url}
+                <CustomImageWrapper
                   alt={image.AltText}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw" // Add responsive sizes here
+                  src={
+                    "https://nocajhsrlymhnxsemfoa.supabase.co/storage/v1/object/public/krist_DB_images" +
+                    image.Url
+                  }
                 />
-              </button>
+              </div>
             );
         })}
       </div>
